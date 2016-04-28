@@ -1,5 +1,5 @@
 name = Sum
-description = takes two numbers and adds them
-package = My First Module
+description = Displays the sum of two numbers using a form for input.
+package = Epicodus Examples
 core = 7.x
 files[] = sum.module

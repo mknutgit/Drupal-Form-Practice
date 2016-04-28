@@ -1,6 +1,6 @@
 <?php
 
-function sum_menu(){
+function sum_menu() {
     $items['sum'] = array(
         'title' => 'Calculate Sum',
         'page callback' => 'drupal_get_form',
@@ -9,26 +9,29 @@ function sum_menu(){
         'type' => MENU_NORMAL_ITEM,
     );
     $items['sum_success_page'] = array(
-        'title' => 'Success',
-        'page callback' => 'sum_success',
-        'access callback' => TRUE,
-        'type' => MENU_CALLBACK,
+       'title' => 'Success',
+       'page callback' => 'sum_success',
+       'access callback' => TRUE,
+       'type' => MENU_CALLBACK,
     );
-
     return $items;
 }
 
-function sum_form(){
+function sum_form() {
     $form['left_number'] = array(
         '#title' => 'Left number',
         '#type' => 'textfield',
         '#description' => t('Please enter your starting number.'),
+        '#element_validate' => array('element_validate_number', 'element_validate_range', 'element_validate_even'),
+        '#required' => TRUE,
     );
 
     $form['right_number'] = array(
         '#title' => 'Right number',
         '#type' => 'textfield',
-        '#description' => t('Please enter something to add to the starting number.'),
+        '#description' => t('Please enter a number to add to the starting number.'),
+        '#element_validate' => array('element_validate_number', 'element_validate_range', 'element_validate_even'),
+        '#required' => TRUE,
     );
 
     $form['submit'] = array(
@@ -39,7 +42,19 @@ function sum_form(){
     return $form;
 }
 
-function sum_form_submit($form, &$form_state){
+function element_validate_range($element) {
+    if ($element['#value'] > 50 || $element['#value'] < -50) {
+        form_error($element, t('Number must be less than 50 or greater than -50.'));
+    }
+}
+
+function element_validate_even($element) {
+    if ($element['#value'] % 2 !=0) {
+        form_error($element, t('Number must be even.'));
+    }
+}
+
+function sum_form_submit($form, &$form_state) {
     $first_number = $form_state['values']['left_number'];
     $second_number = $form_state['values']['right_number'];
     $sum = $first_number + $second_number;
@@ -48,7 +63,7 @@ function sum_form_submit($form, &$form_state){
     $form_state['redirect'] = 'sum_success_page';
 }
 
-function sum_success(){
+function sum_success() {
     $answer = $_SESSION['sum_output'];
-    return 'You calculated a sum! That sum is: ' . $answer;
+    return 'You calculated a sum! The answer is: ' . $answer;
 }
